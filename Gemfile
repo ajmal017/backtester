@@ -11,7 +11,12 @@ gem 'active_model_serializers', '~> 0.8.0'
 
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]
 
-gem 'sqlite3'
+group :development, :test do
+  gem 'sqlite3'
+end
+group :production do
+  gem 'pg'
+end
 
 gem 'quandl_ruby'
 
