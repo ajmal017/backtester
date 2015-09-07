@@ -18,7 +18,7 @@ group :production do
   gem 'pg'
 end
 
-gem 'quandl_ruby'
+gem 'quandl_ruby', '~> 0.2.3'
 
 
 
