@@ -25,9 +25,9 @@ class BacktestsController < ApplicationController
       data[holding.security.ticker] = {:data=>query.metadata, :weight=> holding.weight }
     end
     #logger.debug data
-    perform_test(holdings, amount, data, start_date, end_date)
+    folio = perform_test(holdings, amount, data, start_date, end_date)
 
-    render json: @portfolio, serializer: PortfolioSerializer
+    render json: folio
   end
 
   # could start at start_date - 1, because we would likely buy end of day the previous day.
@@ -48,27 +48,31 @@ class BacktestsController < ApplicationController
       holdings.each do |holding|
         sec_record = data[holding.security.ticker][:data].find { |point| point[:date]==to_date_format(date) }
         if sec_record == nil
-          #logger.debug data[holding.security.ticker][:data].select {|point| point[:date]==to_date_format(date)}
           logger.debug "record is nil"
           folio_hist[to_date_format(date)] = folio_hist[to_date_format(previous_date)]
         else
-          # logger.debug folio_hist[to_date_format(previous_date)][holding.security.ticker]
           logger.debug "getting performance impact"
-          total = total + folio_hist[to_date_format(previous_date)][holding.security.ticker] \
-          * (1 + sec_record[:adj_close])
+          if sec_record[:adj_close] != nil
+            total = total + folio_hist[to_date_format(previous_date)][holding.security.ticker] \
+            * (1 + sec_record[:adj_close])
+          elsif sec_record[:adjusted_close] != nil
+            total = total + folio_hist[to_date_format(previous_date)][holding.security.ticker] \
+            * (1 + sec_record[:adjusted_close])
+          end
         end
       end
+        #calculate target allocation
       if folio_hist[to_date_format(date)] == nil
         amount = Hash.new
         holdings.each do |holding|
           amount[holding.security.ticker] = total * holding.weight
         end
-        logger.debug amount
+        amount[:folio] = total
         folio_hist[to_date_format(date)] = amount
       end
       previous_date = date
     end
-    logger.debug folio_hist
+    folio_hist
   end
 
   private
