@@ -90,7 +90,7 @@ portfolio.controller("StockController", function($scope, $http){
         var auth = "&auth_token=sok7xuv8xDR_9LooZmaZ";
         var url = main + params + auth;*/
         console.log("in the controller");
-        var url = "https://agile-garden-2056.herokuapp.com/backtests";
+        var url = "http://localhost:3000/backtests";
         var portfolio_id = 1;
         var startDate = "2015-08-01";
         var endDate = "2015-08-31";
