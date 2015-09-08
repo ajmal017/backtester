@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   resources :securities, except: [:new, :edit]
   resources :securities, except: [:new, :edit]
 
-  get 'backtests' => 'backtests#calculate'
+  post 'backtests' => 'backtests#calculate'
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
