@@ -57,6 +57,7 @@ GEM
     pg (0.18.3-x64-mingw32)
     quandl_ruby (0.2.3)
     rack (1.6.4)
+    rack-cors (0.4.0)
     rack-test (0.6.3)
       rack (>= 1.0)
     rails (4.2.4)
@@ -109,6 +110,7 @@ DEPENDENCIES
   active_model_serializers (~> 0.8.0)
   pg
   quandl_ruby (= 0.2.3)
+  rack-cors
   rails (= 4.2.4)
   rails-api
   spring

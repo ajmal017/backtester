@@ -20,6 +20,8 @@ end
 
 gem 'quandl_ruby', '0.2.3'
 
+gem 'rack-cors', :require => 'rack/cors'
+
 
 
 # To use ActiveModel has_secure_password
