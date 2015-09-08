@@ -41,6 +41,7 @@ class BacktestsController < ApplicationController
         holdings.each do |holding|
           starting[holding.security.ticker] = holding.weight * amount
         end
+        starting[:folio] = amount
         folio_hist[start_date] = starting
       end
       total = 0
