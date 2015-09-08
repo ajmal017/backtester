@@ -102,7 +102,7 @@ portfolio.controller("StockController", function($scope, $http){
                 "portfolio_id": portfolio_id
             }};
         console.log(backtest_params);
-        $http.post(url, {params: backtest_params}).success(function (response) {
+        $http.post(url, backtest_params).success(function (response) {
             var parseDate = d3.time.format("%Y-%m-%d").parse;
             console.log(response.data);
             $scope.stock.data = (Object.keys(response.data)).map(function (value, index) {
