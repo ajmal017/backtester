@@ -47,7 +47,8 @@ portfolio.directive('stockChart', function() {
                     newVal.sort(function (a, b) {
                         return d3.ascending(accessor.d(a), accessor.d(b));
                     });
-
+                    console.log("in directive");
+                    console.log(techan.scale.plot.ohlc(newVal, accessor).domain());
                     x.domain(newVal.map(accessor.d));
                     y.domain(techan.scale.plot.ohlc(newVal, accessor).domain());
 
@@ -90,7 +91,7 @@ portfolio.controller("StockController", function($scope, $http){
         var auth = "&auth_token=sok7xuv8xDR_9LooZmaZ";
         var url = main + params + auth;*/
         console.log("in the controller");
-        var url = "http://localhost:3000/backtests";
+        var url = "https://agile-garden-2056.herokuapp.com/backtests";
         var portfolio_id = 1;
         var startDate = "2015-08-01";
         var endDate = "2015-08-31";
@@ -104,29 +105,18 @@ portfolio.controller("StockController", function($scope, $http){
         console.log(backtest_params);
         $http.post(url, backtest_params).success(function (response) {
             var parseDate = d3.time.format("%Y-%m-%d").parse;
-            console.log(response.data);
-            $scope.stock.data = (Object.keys(response.data)).map(function (value, index) {
+            console.log(response);
+            $scope.data = (Object.keys(response)).map(function (value, index) {
                 return {
                     date: value,
-                    close: response.data[value]
+                    open:response[value]['folio'],
+                    high: response[value]['folio'],
+                    low: response[value]['folio'],
+                    close: response[value]['folio'],
+                    volume: 0
                 };
             });
-            var data = $scope.stock.data;
-            // array of all price data
-            var recentData = data[data.length - 1];
-
-            var closePrice = recentData.close;
-            var changePrice = Number(recentData.close) - Number(recentData.open);
-            changePrice = changePrice.toFixed(2);
-
-            $scope.stock.closePrice = closePrice;
-            $scope.stock.changePrice = changePrice;
-
-            if (changePrice < 0) {
-                $scope.stock.changePriceColor = "#CC0000";
-            } else {
-                $scope.stock.changePriceColor = "#00CC00";
-            }
+            console.log($scope.data);
         });
     };
     $scope.init_data();
