@@ -90,27 +90,25 @@ portfolio.controller("StockController", function($scope, $http){
         var auth = "&auth_token=sok7xuv8xDR_9LooZmaZ";
         var url = main + params + auth;*/
         console.log("in the controller");
-        var url = "http://localhost:3000/backtest";
+        var url = "https://agile-garden-2056.herokuapp.com/backtests";
         var portfolio_id = 1;
         var startDate = "2015-08-01";
         var endDate = "2015-08-31";
         var starting_amount = 100000;
-
-        $http.post(url, {params:
-                        {   "start_date": startDate,
-                            "end_date":endDate,
-                            "starting_amount": starting_amount,
-                            "portfolio_id": portfolio_id
-                        }}).success(function (response) {
+        var backtest_params = { "backtest":
+            {   "start_date": startDate,
+                "end_date":endDate,
+                "starting_amount": starting_amount,
+                "portfolio_id": portfolio_id
+            }};
+        console.log(backtest_params);
+        $http.post(url, {params: backtest_params}).success(function (response) {
             var parseDate = d3.time.format("%Y-%m-%d").parse;
-            $scope.stock.data = (response.data).map(function (d) {
+            console.log(response.data);
+            $scope.stock.data = (Object.keys(response.data)).map(function (value, index) {
                 return {
-                    date: parseDate(d[0]),
-                    open: +d[1],
-                    high: +d[2],
-                    low: +d[3],
-                    close: +d[4],
-                    volume: +d[5]
+                    date: value,
+                    close: response.data[value]
                 };
             });
             var data = $scope.stock.data;
