@@ -12,9 +12,13 @@ portfolio.directive('stockChart', function() {
             data: '='
         },
         link: function (scope, element) {
-            var margin = {top: 20, right: 20, bottom: 30, left: 50};
+            console.log(element);
+            var margin = {top: 20, right: 100, bottom: 30, left: 100};
             var width = element[0].getBoundingClientRect().width - margin.left - margin.right;
             var height = element[0].getBoundingClientRect().height - margin.top - margin.bottom;
+
+            width = 600;
+            height = 350;
 
             var svg = d3.select(element[0]).append("svg")   // this needs to be fixed
                 .attr("width", width + margin.left + margin.right)
@@ -48,19 +52,24 @@ portfolio.directive('stockChart', function() {
                         return d3.ascending(accessor.d(a), accessor.d(b));
                     });
                     console.log("in directive");
+                    console.log(newVal.map(accessor.d));
                     console.log(techan.scale.plot.ohlc(newVal, accessor).domain());
                     x.domain(newVal.map(accessor.d));
                     y.domain(techan.scale.plot.ohlc(newVal, accessor).domain());
 
                     svg.append("g")
                         .datum(newVal)
-                        .attr("class", "close")
                         .call(close);
 
                     svg.append("g")
                         .attr("class", "x axis")
                         .attr("transform", "translate(0," + height + ")")
-                        .call(xAxis);
+                        .call(xAxis)
+                        .append("text")
+                        .attr("y", 6)
+                        .attr("dy", ".71em")
+                        .style("text-anchor", "end")
+                        .text("Date");
 
                     svg.append("g")
                         .attr("class", "y axis")
@@ -102,14 +111,12 @@ portfolio.controller("StockController", function($scope, $http){
                 "starting_amount": starting_amount,
                 "portfolio_id": portfolio_id
             }};
-        console.log(backtest_params);
         $http.post(url, backtest_params).success(function (response) {
             var parseDate = d3.time.format("%Y-%m-%d").parse;
-            console.log(response);
             $scope.data = (Object.keys(response)).map(function (value, index) {
                 return {
-                    date: value,
-                    open:response[value]['folio'],
+                    date: parseDate(value),
+                    open: response[value]['folio'],
                     high: response[value]['folio'],
                     low: response[value]['folio'],
                     close: response[value]['folio'],
