@@ -86,7 +86,24 @@ portfolio.directive('stockChart', function() {
     }
 });
 
-portfolio.controller("StockController", function($scope, $http){
+portfolio.controller("SecurityController"), function($scope, $http){
+
+    $scope.add_security = function() {
+      security_params = { "security": {
+          "identifier": $scope.identifier,
+          "ticker": $scope.ticker,
+          "name": $scope.name
+      }};
+      $http.put(url, security_params).success( function(response){
+          //check if the security already exists
+      });
+      $http.post(url, security_params).success(function(success){
+          //on successful add to db
+      });
+  }
+};
+
+portfolio.controller("PortfolioController", function($scope, $http){
 
     $scope.init_data = function() {
         /*var currentDate = new Date();

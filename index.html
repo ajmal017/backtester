@@ -21,8 +21,12 @@
 
         <div ng-app="portfolio">
             <!--add stocks to db-->
-            <div>
+            <div ng-model="SecurityController" class="col-centered">
                 <!--need text entry fields and collapsible div-->
+                <p>Update or Add a security. Quandl code needed</p>
+                <input type="text" ng-bind="identifier" placeholder="Enter Quandl code">
+                <input type="text" ng-bind="ticker" placeholder="enter general ticker">
+                <input type="text" ng-bind="name" placeholder="enter name for security">
             </div>
 
             <!--add portfolio or change holdings to a portfolio-->
@@ -36,7 +40,7 @@
             </div>
 
             <!--section for the chart-->
-            <div ng-controller="StockController">
+            <div ng-controller="PortfolioController">
                 <!--add the chart div from Eve trading-->
                 <stock-chart data="data" class="col-centered col-md-6">
 
