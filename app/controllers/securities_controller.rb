@@ -1,5 +1,6 @@
 class SecuritiesController < ApplicationController
   before_action :set_security, only: [:show, :update, :destroy]
+  before_action :set_security_by_name, only: [:named]
 
   # GET /securities
   # GET /securities.json
@@ -12,6 +13,10 @@ class SecuritiesController < ApplicationController
   # GET /securities/1
   # GET /securities/1.json
   def show
+    render json: @security
+  end
+
+  def named
     render json: @security
   end
 
@@ -48,6 +53,13 @@ class SecuritiesController < ApplicationController
   end
 
   private
+
+    def set_security_by_name
+      @security = Security.find_by_ticker(params[:name])
+      if @security == nil
+        raise ActiveRecord::RecordNotFound
+      end
+    end
 
     def set_security
       @security = Security.find(params[:id])
