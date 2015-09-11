@@ -4,6 +4,8 @@
 
 var portfolio = angular.module("portfolio", ['ui.bootstrap']);
 
+var url = "https://agile-garden-2056.herokuapp.com/";
+
 portfolio.directive('stockChart', function() {
     return {
         restrict: 'EA',
@@ -87,20 +89,26 @@ portfolio.directive('stockChart', function() {
 });
 
 portfolio.controller("SecurityController"), function($scope, $http){
-
     $scope.add_security = function() {
+        var lurl = url + "securities";
       security_params = { "security": {
           "identifier": $scope.identifier,
           "ticker": $scope.ticker,
           "name": $scope.name
       }};
-      $http.put(url, security_params).success( function(response){
-          //check if the security already exists
-      });
-      $http.post(url, security_params).success(function(success){
+      $http.post(lurl, security_params).success(function(success){
           //on successful add to db
       });
-  }
+  };
+    $scope.get_security = function() {
+        var lurl = url + "securities/name/";
+        $http.get(lurl + $scope.ticker).success( function(response){
+            //check if the security already exists
+            $scope.identifier = response.security.identifier;
+            $scope.ticker = response.security.ticker;
+            $scope.name = response.security.name;
+        });
+    }
 };
 
 portfolio.controller("PortfolioController", function($scope, $http){
@@ -117,18 +125,18 @@ portfolio.controller("PortfolioController", function($scope, $http){
         var auth = "&auth_token=sok7xuv8xDR_9LooZmaZ";
         var url = main + params + auth;*/
         console.log("in the controller");
-        var url = "https://agile-garden-2056.herokuapp.com/backtests";
-        var portfolio_id = 1;
-        var startDate = "2015-08-01";
-        var endDate = "2015-08-31";
-        var starting_amount = 100000;
+        var lurl = url + "backtest";
+        var portfolio_id = $scope.portfolio_id;
+        var startDate = $scope.start_date;
+        var endDate = $scope.end_date;
+        var starting_amount = $scope.amount;
         var backtest_params = { "backtest":
             {   "start_date": startDate,
                 "end_date":endDate,
                 "starting_amount": starting_amount,
                 "portfolio_id": portfolio_id
             }};
-        $http.post(url, backtest_params).success(function (response) {
+        $http.post(lurl, backtest_params).success(function (response) {
             var parseDate = d3.time.format("%Y-%m-%d").parse;
             $scope.data = (Object.keys(response)).map(function (value, index) {
                 return {
@@ -143,5 +151,4 @@ portfolio.controller("PortfolioController", function($scope, $http){
             console.log($scope.data);
         });
     };
-    $scope.init_data();
 });

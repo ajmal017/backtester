@@ -42,6 +42,11 @@
             <!--section for the chart-->
             <div ng-controller="PortfolioController">
                 <!--add the chart div from Eve trading-->
+                <input type="number" ng-bind="portfolio_id" placeholder="portfolio_id">
+                <input type="text" ng-bind="start_date" placeholder="yyyy-mm-dd">
+                <input type="text" ng-bind="end_date" placeholder="yyyy-mm-dd">
+                <input type="number" ng-bind="amount" placeholder="starting amount">
+                <button ng-click="init_data()">Backtest</button>
                 <stock-chart data="data" class="col-centered col-md-6">
 
                 </stock-chart>
