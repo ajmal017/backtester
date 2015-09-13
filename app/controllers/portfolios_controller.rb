@@ -15,6 +15,10 @@ class PortfoliosController < ApplicationController
     render json: @portfolio
   end
 
+  def search
+    render json: Portfolio.where('name like ?', "%#{params[:query]}%")
+  end
+
   # POST /portfolios
   # POST /portfolios.json
   def create

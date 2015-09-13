@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   resources :holdings, except: [:new, :edit]
   resources :portfolios, except: [:new, :edit]
-  resources :securities, except: [:new, :edit]
+  get 'portfolios/search/:query' => 'portfolios#search'
   resources :securities, except: [:new, :edit]
   get 'securities/name/:name' => 'securities#named'
 
