@@ -57,7 +57,7 @@
                              ng-controller="HoldingController" ng-init="holding=holding">
                                 <div class="col-md-10">{{holding.weight}} of the portfolio is in {{holding.security.name}}</div>
                                 <div class="col-md-1">
-                                    <span class="close glyphicon glyphicon-remove" ng-click="deleteHolding()"></span>
+                                    <span class="close glyphicon glyphicon-remove" ng-click="deleteHolding($index)"></span>
                                 </div>
                         </div>
                         <div class="row section" ng-controller="HoldingController">

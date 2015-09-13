@@ -165,12 +165,13 @@ portfolio.controller("PortfolioController", function($scope, $http){
 });
 
 portfolio.controller("HoldingController", function($scope, $http){
-    $scope.deleteHolding = function(){
+    $scope.deleteHolding = function(val){
         var lurl = url + "/holdings/";
         $http.delete(lurl + $scope.holding.id).success(function(response){
-
         });
-    }
+        //I am aware that this is not proper
+        $scope.asyncSelected.holdings.splice(val, 1);
+    };
 
     $scope.addHolding = function(){
         var lurl = url + "/holdings/";
