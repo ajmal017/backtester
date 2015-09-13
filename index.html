@@ -21,13 +21,6 @@
 
         <div ng-app="portfolio">
             <!--add stocks to db-->
-            <div ng-model="SecurityController" class="col-centered row section">
-                <!--need text entry fields and collapsible div-->
-                <p>Update or Add a security. Quandl code needed</p>
-                <input type="text" ng-model="identifier" placeholder="Enter Quandl code">
-                <input type="text" ng-model="ticker" placeholder="enter general ticker">
-                <input type="text" ng-model="name" placeholder="enter name for security">
-            </div>
 
             <!--add portfolio or change holdings to a portfolio-->
             <div>
@@ -46,25 +39,70 @@
                     <div class="col-md-4"><strong>Choose a portfolio to backtest:</strong></div>
                     <div class="col-md-6">
                         <input type="text" ng-model="asyncSelected" placeholder="Search for portfolio"
-                               typeahead="folio as folio.name for folio in getPortfolios()"
+                               typeahead="folio as folio.name for folio in getPortfolios($viewValue)"
                                typeahead-wait-ms="1000" typeahead-loading="loadingPortfolios" class="form-control col-md-4">
                         <i ng-show="loadingPortfolios" class="glyphicon glyphicon-refresh"></i>
                     </div>
+                    <div class="col-md-1">
+                        <span class="close glyphicon glyphicon-plus" ng-click="addPortfolio()"></span>
+                    </div>
                 </div>
-                <div class="row section" ng-hide="!asyncSelected">
+                <div class="row section" ng-hide="!asyncSelected.holdings">
+                    <div class="row">
                         <div class="col-md-4">
                             <strong>The holdings in this portfolio:</strong>
                         </div>
                     <div class="col-md-6">
-                        <div ng-repeat="holding in asyncSelected.holdings" class="row">
-                            {{holding.weight}} of the portfolio is in {{holding.security.name}}
+                        <div ng-repeat="holding in asyncSelected.holdings" class="row" style="margin-bottom: 10px"
+                             ng-controller="HoldingController" ng-init="holding=holding">
+                                <div class="col-md-10">{{holding.weight}} of the portfolio is in {{holding.security.name}}</div>
+                                <div class="col-md-1">
+                                    <span class="close glyphicon glyphicon-remove" ng-click="deleteHolding()"></span>
+                                </div>
+                        </div>
+                        <div class="row section" ng-controller="HoldingController">
+                            <div class="col-md-4">
+                                <input  class="form-control" type="number" step="any" ng-model="new_holding.weight" style="width: 80px">
+                            </div>
+                            <div class="col-md-6">
+                                <input type="text" ng-model="security" placeholder="Search for security by ticker"
+                                       typeahead="sec as (sec.name +' ('+sec.ticker+')') for sec in getSecurity($viewValue)"
+                                       typeahead-wait-ms="1000" typeahead-loading="loadingSecurity" class="form-control">
+                                <i ng-show="loadingSecurity" class="glyphicon glyphicon-refresh"></i>
+                            </div>
+                            <div class="col-md-1">
+                                <span class="close glyphicon glyphicon-plus" ng-click="addHolding()"></span>
+                            </div>
+                        </div>
+                    </div>
+                        </div>
+                    <div ng-controller="SecurityController" class="col-centered row section">
+                        <!--need text entry fields and collapsible div-->
+                        <p class="col-md-4">Add a security, Quandl code required</p>
+                        <div class="col-md-2">
+                            <input class="col-md-2 form-control" type="text" ng-model="new_identifier" placeholder="Quandl code">
+                            </div>
+                        <div class="col-md-2">
+                        <input class="col-md-2 form-control" type="text" ng-model="new_ticker" placeholder="enter ticker">
+                            </div>
+                        <div class="col-md-3">
+                        <input class="col-md-3 form-control" type="text" ng-model="new_name" placeholder="enter name for security">
+                            </div>
+                        <div class="col-md-1">
+                            <span class="close glyphicon glyphicon-plus" ng-click="addSecurity()"></span>
                         </div>
                     </div>
                 </div>
                 <div class="row section">
-                <input type="text" ng-model="start_date" placeholder="yyyy-mm-dd">
-                <input type="text" ng-model="end_date" placeholder="yyyy-mm-dd">
-                <input type="number" ng-model="amount" placeholder="starting amount">
+                <div class="col-md-3">
+                    <input class="form-control" type="text" ng-model="start_date" placeholder=" start: yyyy-mm-dd">
+                </div>
+                <div class="col-md-3">
+                    <input class="form-control" type="text" ng-model="end_date" placeholder="end: yyyy-mm-dd">
+                </div>
+                <div class="col-md-3">
+                <input class="form-control" type="number" ng-model="amount" placeholder="starting amount">
+                </div>
                 <button ng-click="backtest()">Backtest</button>
                 </div>
                 <stock-chart data="data" class="col-centered col-md-6">

@@ -88,35 +88,47 @@ portfolio.directive('stockChart', function() {
     }
 });
 
-portfolio.controller("SecurityController"), function($scope, $http){
-    $scope.add_security = function() {
+portfolio.controller("SecurityController", function($scope, $http){
+    $scope.addSecurity = function() {
         var lurl = url + "securities";
       security_params = { "security": {
-          "identifier": $scope.identifier,
-          "ticker": $scope.ticker,
-          "name": $scope.name
+          "identifier": $scope.new_identifier,
+          "ticker": $scope.new_ticker,
+          "name": $scope.new_name
       }};
-      $http.post(lurl, security_params).success(function(success){
+        console.log(security_params);
+      $http.post(lurl, security_params).success(function(response){
           //on successful add to db
+          console.log(response);
       });
   };
-    $scope.get_security = function() {
+    $scope.get_security = function(ticker) {
         var lurl = url + "securities/name/";
-        $http.get(lurl + $scope.ticker).success( function(response){
+        $http.get(lurl + ticker).success( function(response){
             //check if the security already exists
             $scope.identifier = response.security.identifier;
             $scope.ticker = response.security.ticker;
             $scope.name = response.security.name;
         });
     }
-};
+});
 
 portfolio.controller("PortfolioController", function($scope, $http){
 
     $scope.getPortfolios = function(val){
-        var lurl = url + "portfolios";
-        return $http.get(lurl, {"portfolio":{"query":val}}).then(function(response) {
+        var lurl = url + "portfolios/search/";
+        console.log(lurl+val);
+        return $http.get(lurl + val).then(function(response) {
             return response.data.portfolios;
+        });
+    };
+
+    $scope.addPortfolio = function(){
+        var lurl = url + "portfolios";
+        params = {"portfolio": {"name":$scope.asyncSelected}};
+        $http.post(lurl, params).success(function(response){
+            console.log(response);
+            $scope.asyncSelected = response.portfolio;
         });
     };
 
@@ -150,4 +162,50 @@ portfolio.controller("PortfolioController", function($scope, $http){
             console.log($scope.data);
         });
     };
+});
+
+portfolio.controller("HoldingController", function($scope, $http){
+    $scope.deleteHolding = function(){
+        var lurl = url + "/holdings/";
+        $http.delete(lurl + $scope.holding.id).success(function(response){
+
+        });
+    }
+
+    $scope.addHolding = function(){
+        var lurl = url + "/holdings/";
+        params = {"holding":
+                { "weight": $scope.new_holding.weight,
+                    "portfolio_id":$scope.asyncSelected.id,
+                  "security_id": $scope.security.id}
+        };
+        console.log(params);
+        console.log($scope.security.id);
+        if ($scope.security.id != null && $scope.security.id !== 'undefined') {
+            $http.post(lurl, params).success(function(response){
+                $scope.asyncSelected.holdings.push(response.holding);
+            });
+        }
+    };
+
+    $scope.add_security = function() {
+        var lurl = url + "securities";
+        security_params = { "security": {
+            "identifier": $scope.identifier,
+            "ticker": $scope.ticker,
+            "name": $scope.name
+        }};
+        $http.post(lurl, security_params).success(function(success){
+            //on successful add to db
+        });
+    };
+    $scope.getSecurity = function(ticker) {
+        console.log(ticker);
+        var lurl = url + "securities/name/";
+        return $http.get(lurl + ticker).then( function(response){
+            //check if the security already exists
+            console.log([response.data.security]);
+            return [response.data.security];
+        });
+    }
 });
