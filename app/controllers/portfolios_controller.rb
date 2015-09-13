@@ -16,7 +16,7 @@ class PortfoliosController < ApplicationController
   end
 
   def search
-    render json: Portfolio.where('name like ?', "%#{params[:query]}%")
+    render json: Portfolio.where('lower(name) like ?', "%#{params[:query].downcase}%")
   end
 
   # POST /portfolios
