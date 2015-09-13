@@ -6,6 +6,20 @@ var portfolio = angular.module("portfolio", ['ui.bootstrap']);
 
 var url = "https://agile-garden-2056.herokuapp.com/";
 
+function enter() {
+    coordsText.style("display", "inline");
+}
+
+function out() {
+    coordsText.style("display", "none");
+}
+
+function move(coords) {
+    coordsText.text(
+        timeAnnotation.format()(coords[0]) + ", " + ohlcAnnotation.format()(coords[1])
+    );
+}
+
 portfolio.directive('stockChart', function() {
     return {
         restrict: 'EA',
@@ -40,6 +54,7 @@ portfolio.directive('stockChart', function() {
                 .xScale(x)
                 .yScale(y);
 
+
             var xAxis = d3.svg.axis()
                 .scale(x)
                 .orient("bottom");
@@ -47,6 +62,27 @@ portfolio.directive('stockChart', function() {
             var yAxis = d3.svg.axis()
                 .scale(y)
                 .orient("left");
+
+            var timeAnnotation = techan.plot.axisannotation()
+                .axis(xAxis)
+                .format(d3.time.format('%Y-%m-%d'))
+                .width(65)
+                .translate([0, height]);
+
+            var ohlcAnnotation = techan.plot.axisannotation()
+                .axis(yAxis)
+                .width(100)
+                .format(d3.format(',.2fs'));
+
+            var crosshair = techan.plot.crosshair()
+                .xScale(x)
+                .yScale(y)
+                .xAnnotation(timeAnnotation)
+                .yAnnotation(ohlcAnnotation)
+                .on("enter", enter)
+                .on("out", out)
+                .on("move", move);
+
             var accessor = close.accessor();
             scope.$watch('data', function (newVal) {
                 if (newVal) {
@@ -54,6 +90,12 @@ portfolio.directive('stockChart', function() {
                         return d3.ascending(accessor.d(a), accessor.d(b));
                     });
                     console.log("in directive");
+                    d3.select("#data").remove();
+                    d3.select("#xaxis").remove();
+                    d3.select("#yaxis").remove();
+                    d3.select("#yann").remove();
+                    d3.select("#xann").remove();
+                    d3.select("#crosshair").remove();
                     console.log(newVal.map(accessor.d));
                     console.log(techan.scale.plot.ohlc(newVal, accessor).domain());
                     x.domain(newVal.map(accessor.d));
@@ -61,10 +103,12 @@ portfolio.directive('stockChart', function() {
 
                     svg.append("g")
                         .datum(newVal)
+                        .attr("id","data")
                         .call(close);
 
                     svg.append("g")
                         .attr("class", "x axis")
+                        .attr("id", "xaxis")
                         .attr("transform", "translate(0," + height + ")")
                         .call(xAxis)
                         .append("text")
@@ -75,6 +119,7 @@ portfolio.directive('stockChart', function() {
 
                     svg.append("g")
                         .attr("class", "y axis")
+                        .attr("id", "yaxis")
                         .call(yAxis)
                         .append("text")
                         .attr("transform", "rotate(-90)")
@@ -82,6 +127,23 @@ portfolio.directive('stockChart', function() {
                         .attr("dy", ".71em")
                         .style("text-anchor", "end")
                         .text("Price ($)");
+
+                    svg.append("g")
+                        .attr("class", "y annotation left")
+                        .attr("id", "yann")
+                        .datum([{value: 74}, {value: 67.5}, {value: 58}, {value:40}]) // 74 should not be rendered
+                        .call(ohlcAnnotation);
+
+                    svg.append("g")
+                        .attr("class", "x annotation bottom")
+                        .attr("id", "xann")
+                        .datum([{value: x.domain()[30]}])
+                        .call(timeAnnotation);
+
+                    svg.append("g")
+                        .attr("class", "crosshair")
+                        .attr("id", "crosshair")
+                        .call(crosshair);
                 }
             });
         }
