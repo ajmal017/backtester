@@ -113,20 +113,18 @@ portfolio.controller("SecurityController"), function($scope, $http){
 
 portfolio.controller("PortfolioController", function($scope, $http){
 
-    $scope.init_data = function() {
-        /*var currentDate = new Date();
-        var currentDateString = currentDate.getFullYear() + "-" + ("0" + (currentDate.getMonth() + 1)).slice(-2) + "-" + ("0" + currentDate.getDate()).slice(-2);
-        var previousDate = new Date();
-        var previousDate = new Date(previousDate.setMonth(currentDate.getMonth() - 3));
-        var previousDateString = previousDate.getFullYear() + "-" + ("0" + (previousDate.getMonth() + 1)).slice(-2) + "-" + ("0" + previousDate.getDate()).slice(-2);
+    $scope.getPortfolios = function(val){
+        var lurl = url + "portfolios";
+        return $http.get(lurl, {"portfolio":{"query":val}}).then(function(response) {
+            return response.data.portfolios;
+        });
+    };
 
-        var main = "http://www.quandl.com/api/v1/datasets/" + $scope.stock.dataset + ".json";
-        var params = "?&trim_start=" + previousDateString + "&trim_end=" + currentDateString;
-        var auth = "&auth_token=sok7xuv8xDR_9LooZmaZ";
-        var url = main + params + auth;*/
+    $scope.backtest = function() {
+        console.log($scope.asyncSelected);
         console.log("in the controller");
-        var lurl = url + "backtest";
-        var portfolio_id = $scope.portfolio_id;
+        var lurl = url + "backtests";
+        var portfolio_id = $scope.asyncSelected.id;
         var startDate = $scope.start_date;
         var endDate = $scope.end_date;
         var starting_amount = $scope.amount;
@@ -136,6 +134,7 @@ portfolio.controller("PortfolioController", function($scope, $http){
                 "starting_amount": starting_amount,
                 "portfolio_id": portfolio_id
             }};
+        console.log(backtest_params);
         $http.post(lurl, backtest_params).success(function (response) {
             var parseDate = d3.time.format("%Y-%m-%d").parse;
             $scope.data = (Object.keys(response)).map(function (value, index) {

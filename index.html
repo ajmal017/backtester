@@ -10,7 +10,7 @@
         <title>Static Backtester</title>
     </head>
 
-    <body class="col-md-8 col-centered">
+    <body class="col-md-8 container col-centered">
         <header>
             <div>
                 <h1>
@@ -21,12 +21,12 @@
 
         <div ng-app="portfolio">
             <!--add stocks to db-->
-            <div ng-model="SecurityController" class="col-centered">
+            <div ng-model="SecurityController" class="col-centered row section">
                 <!--need text entry fields and collapsible div-->
                 <p>Update or Add a security. Quandl code needed</p>
-                <input type="text" ng-bind="identifier" placeholder="Enter Quandl code">
-                <input type="text" ng-bind="ticker" placeholder="enter general ticker">
-                <input type="text" ng-bind="name" placeholder="enter name for security">
+                <input type="text" ng-model="identifier" placeholder="Enter Quandl code">
+                <input type="text" ng-model="ticker" placeholder="enter general ticker">
+                <input type="text" ng-model="name" placeholder="enter name for security">
             </div>
 
             <!--add portfolio or change holdings to a portfolio-->
@@ -42,11 +42,31 @@
             <!--section for the chart-->
             <div ng-controller="PortfolioController">
                 <!--add the chart div from Eve trading-->
-                <input type="number" ng-bind="portfolio_id" placeholder="portfolio_id">
-                <input type="text" ng-bind="start_date" placeholder="yyyy-mm-dd">
-                <input type="text" ng-bind="end_date" placeholder="yyyy-mm-dd">
-                <input type="number" ng-bind="amount" placeholder="starting amount">
-                <button ng-click="init_data()">Backtest</button>
+                <div class="row section">
+                    <div class="col-md-4"><strong>Choose a portfolio to backtest:</strong></div>
+                    <div class="col-md-6">
+                        <input type="text" ng-model="asyncSelected" placeholder="Search for portfolio"
+                               typeahead="folio as folio.name for folio in getPortfolios()"
+                               typeahead-wait-ms="1000" typeahead-loading="loadingPortfolios" class="form-control col-md-4">
+                        <i ng-show="loadingPortfolios" class="glyphicon glyphicon-refresh"></i>
+                    </div>
+                </div>
+                <div class="row section" ng-hide="!asyncSelected">
+                        <div class="col-md-4">
+                            <strong>The holdings in this portfolio:</strong>
+                        </div>
+                    <div class="col-md-6">
+                        <div ng-repeat="holding in asyncSelected.holdings" class="row">
+                            {{holding.weight}} of the portfolio is in {{holding.security.name}}
+                        </div>
+                    </div>
+                </div>
+                <div class="row section">
+                <input type="text" ng-model="start_date" placeholder="yyyy-mm-dd">
+                <input type="text" ng-model="end_date" placeholder="yyyy-mm-dd">
+                <input type="number" ng-model="amount" placeholder="starting amount">
+                <button ng-click="backtest()">Backtest</button>
+                </div>
                 <stock-chart data="data" class="col-centered col-md-6">
 
                 </stock-chart>
@@ -55,7 +75,7 @@
 
         <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
-        <script src="javascript/ui-bootstrap.min.js"></script>
+        <script src="javascript/ui-bootstrap-tpls.min.js"></script>
         <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
         <script src="http://techanjs.org/techan.min.js"></script>
         <script src="javascript/controllers.js"></script>
